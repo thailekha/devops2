@@ -134,6 +134,12 @@ def menu_level_2(conn=None, instance=None):
         # Manage Nginx
         manage_nginx(dev_util.get_ip(instance))
       elif option == 5:
+        #change name
+        instance.remove_tag('Name', instance.tags['Name'])
+        instance.update()
+        instance.add_tag('Name',input('New name ===> '))
+        instance.update()
+      elif option == 6:
         # Terminate
         terminate(conn, instance)
         flag = False
