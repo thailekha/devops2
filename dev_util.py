@@ -112,6 +112,8 @@ Arguments:
 
 def deploy_default_config(instance_ip):
   run.do_install(instance_ip, 'python35')
+  run.scp_exec(instance_ip, './install_node.py')
+  run.scp_exec(instance_ip, './install_npm.py')
   #run.do_install(instance_ip, 'nginx')
   #run.scp_exec(instance_ip, './check_webserver.py')  # copy check_webserver.py to instance
   #run.ssh_exec(instance_ip, './check_webserver.py')  # execute the script

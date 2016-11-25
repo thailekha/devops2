@@ -113,7 +113,7 @@ def menu_level_2(conn=None, instance=None):
       option = ui.show('~~~Level 2 - Please choose a task ',
                        ['Print SSH command to connect to the instance', 'Run a command', 'Copy file to instance',
                         'Check CPU',
-                        'Manage Nginx', 'Terminate'])
+                        'Manage Nginx','Change name', 'Terminate'])
       if option == 0:
         # Print SSH command to connect to the instance
         logger.log('ssh -i "' + pem_dir + '" ec2-user@' + dev_util.get_ip(instance), 's')
