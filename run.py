@@ -13,7 +13,6 @@ logger = logger.Logger()
 def main():
   if len(sys.argv) == 2 and valid_ip_address(sys.argv[1]):
     instance_ip = '-'.join(sys.argv[1].split('.'))
-    sync_time()
   else:
     logger.log('Cannot parse ip address', 'e')
 
@@ -59,19 +58,6 @@ def ssh_exec(instance_ip, cmd):
   logger.log(status, 'st')
   logger.log(output, 'o')
   return (status, output)
-
-
-"""
-Synchronize the time of the local machine with the ubuntu server
-"""
-
-
-def sync_time():
-  logger.log('Synchronizing time ...')
-  (status, output) = subprocess.getstatusoutput('sudo ntpdate ntp.ubuntu.com')
-  logger.log(status, 'st')
-  logger.log(output, 'o')
-
 
 """
 Keep polling an instance to check if its SSH port is openned
