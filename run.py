@@ -27,7 +27,7 @@ def menu():
   try:
     flag = True
     while (flag):
-      option = util.ui.show('Please choose a task ',
+      option = util.show('Please choose a task ',
                        ['Run a command', 'Check CPU','Cloudwatch metrics'])
       if option == 0:
         # Run a command
