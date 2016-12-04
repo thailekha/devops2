@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-import boto.ec2, boto.ec2.cloudwatch, pprint, datetime, sys
+import boto.ec2, boto.ec2.cloudwatch, pprint, datetime, sys, logging
 import util
 
 logger = util.Logger()
@@ -31,42 +31,48 @@ Attributes of a metric:
 
 
 def main():
-  if len(sys.argv) == 3:
-    instance_ip = '-'.join(sys.argv[1].split('.'))
+  register_credentials = True
+  while(register_credentials):
+    logger.log('Please provide credentials, or input -99 to exit', 'w')
+    key_id = input('Key ID: ')
+    if key_id == '-99':
+      return
+    secret = input('Secret: ')
+    if secret == '-99':
+      return
+
     ec2_conn = boto.ec2.connect_to_region('us-west-2',
-                                          aws_access_key_id=sys.argv[1],
-                                          aws_secret_access_key=sys.argv[2])
+                                          aws_access_key_id=key_id,
+                                          aws_secret_access_key=secret)
     cw = boto.ec2.cloudwatch.connect_to_region('us-west-2',
-                                               aws_access_key_id=sys.argv[1],
-                                               aws_secret_access_key=sys.argv[2])
-    logger.log('Credentials parsed', 's')
-
-    # pp(cw.describe_alarms())
-    # list all metrics
-    # all_metrics = cw.list_metrics()
-    # get_stats(cw, ec2_conn, 'CPUUtilization', 'AWS/EC2', 'i-0f18e6168b19416d4')
-    # Ctrl C -> KeyboardInterrupt
-
+                                               aws_access_key_id=key_id,
+                                               aws_secret_access_key=secret)
+    logger.log('Credentials added', 's')
     logger.log('Retrieving metrics ...', 'w')
-    running_instances_metrics = get_running_instances_metrics(ec2_conn, cw.list_metrics(
-      # all dimensions with InstanceId name
-      dimensions={
-        'InstanceId': None
-      },
-      namespace='AWS/EC2'
-    ))
-    metrics_list = sorted(list(running_instances_metrics.keys()))
-    logger.log('Done', 'w')
+    running_instances_metrics = None
+    try:
+      running_instances_metrics = get_running_instances_metrics(ec2_conn, cw.list_metrics(
+        # all dimensions with InstanceId name
+        dimensions={
+          'InstanceId': None
+        },
+        namespace='AWS/EC2'
+      ))
+      register_credentials = False
+    except:
+      logger.log(sys.exc_info()[0], 'e')
+      logger.log('Error adding credentials, please try again','e')
 
-    flag = True
-    while (flag):
-      option = util.show('Choose metric:', metrics_list)
-      if option >= 0 and option < len(metrics_list):
-        print_stats(cw, ec2_conn, metrics_list[option], 'AWS/EC2', running_instances_metrics[metrics_list[option]])
-      elif option == -99:
-        flag = False
-  else:
-    logger.log('Cannot parse credentials', 'e')
+  metrics_list = sorted(list(running_instances_metrics.keys()))
+  logger.log('Done', 'w')
+
+  flag = True
+  while (flag):
+    option = util.show('Choose metric:', metrics_list)
+    if option >= 0 and option < len(metrics_list):
+      print_stats(cw, ec2_conn, metrics_list[option], 'AWS/EC2', running_instances_metrics[metrics_list[option]])
+    elif option == -99:
+      flag = False
 
 
 # ===========================================================================================
@@ -151,43 +157,8 @@ def list_ec2_metrics(all_metrics):
 
 
 # ===========================================================================================
-# list all namespaces and dimensions
+# dictionary of metrics mapped to instance ids
 # ===========================================================================================
-"""
-{'CPUCreditBalance': [{'InstanceId': ['i-0f18e6168b19416d4']},
-                      {'InstanceId': ['i-0150c3ce3a86c5beb']},
-                      {'InstanceId': ['i-0d631b18e93a20d7c']}],
- 'CPUCreditUsage': [{'InstanceId': ['i-0a1505bcf041b9c5e']},
-                    {'InstanceId': ['i-0150c3ce3a86c5beb']}],
- 'CPUUtilization': [{'InstanceId': ['i-0f18e6168b19416d4']},
-                    {'InstanceId': ['i-0d631b18e93a20d7c']},
-                    {'InstanceId': ['i-0150c3ce3a86c5beb']}],
- 'DiskReadBytes': [{'InstanceId': ['i-0d631b18e93a20d7c']},
-                   {'InstanceId': ['i-0a1505bcf041b9c5e']}],
- 'DiskReadOps': [{'InstanceId': ['i-0f18e6168b19416d4']},
-                 {'InstanceId': ['i-0a1505bcf041b9c5e']},
-                 {'InstanceId': ['i-0150c3ce3a86c5beb']}],
- 'DiskWriteBytes': [{'InstanceId': ['i-0f18e6168b19416d4']},
-                    {'InstanceId': ['i-0150c3ce3a86c5beb']}],
- 'DiskWriteOps': [{'InstanceId': ['i-0f18e6168b19416d4']},
-                  {'InstanceId': ['i-0150c3ce3a86c5beb']}],
- 'NetworkIn': [{'InstanceId': ['i-0d631b18e93a20d7c']},
-               {'InstanceId': ['i-0a1505bcf041b9c5e']}],
- 'NetworkOut': [{'InstanceId': ['i-0d631b18e93a20d7c']},
-                {'InstanceId': ['i-0a1505bcf041b9c5e']}],
- 'NetworkPacketsIn': [{'InstanceId': ['i-0f18e6168b19416d4']},
-                      {'InstanceId': ['i-0a1505bcf041b9c5e']},
-                      {'InstanceId': ['i-0150c3ce3a86c5beb']}],
- 'NetworkPacketsOut': [{'InstanceId': ['i-0f18e6168b19416d4']},
-                       {'InstanceId': ['i-0150c3ce3a86c5beb']},
-                       {'InstanceId': ['i-0d631b18e93a20d7c']}],
- 'StatusCheckFailed': [{'InstanceId': ['i-0f18e6168b19416d4']},
-                       {'InstanceId': ['i-0150c3ce3a86c5beb']}],
- 'StatusCheckFailed_Instance': [{'InstanceId': ['i-0d631b18e93a20d7c']}],
- 'StatusCheckFailed_System': [{'InstanceId': ['i-0a1505bcf041b9c5e']},
-                              {'InstanceId': ['i-0d631b18e93a20d7c']}]}
-"""
-
 
 def get_running_instances_metrics(ec2_conn, ec2_metrics):
   reservations = ec2_conn.get_all_reservations()
@@ -197,8 +168,6 @@ def get_running_instances_metrics(ec2_conn, ec2_metrics):
       # only collect running instances
       if i.state == 'running':
         ids_running.append(i.id)
-
-  logger.log(ids_running,'e')
 
   filterred_metrics = {}
   """
@@ -218,13 +187,6 @@ def get_running_instances_metrics(ec2_conn, ec2_metrics):
         filterred_metrics[m.name] += running_instances_ids
       else:
         filterred_metrics[m.name] = running_instances_ids
-  pp(filterred_metrics)
-  """
-  print('Running instances:')
-  pp(ids_running)
-  print('Filterred dimensions:')
-  pp(filterred_ec2_dimensions)
-  """
   return filterred_metrics
 
 

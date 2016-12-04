@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 import subprocess, time, sys, logging, boto3.ec2.cloudwatch
-import util,monitor
+import util,monitor,cloudwatch
 
 """
 Main method to start the program
@@ -37,7 +37,7 @@ def menu():
         # Check CPU
         monitor.get_cpu_usage(instance_ip)
       elif option == 2:
-        pass
+        cloudwatch.main()
       elif option == -99:
         flag = False
   except:
