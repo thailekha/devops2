@@ -1,7 +1,6 @@
-import run
-import logger
+import util
 
-logger = logger.Logger()
+logger = util.Logger()
 
 """
 Get the CPU usage of the currently connected instance
@@ -13,7 +12,7 @@ Returns
 
 
 def get_cpu_usage(instance_ip):
-  (status, output) = run.ssh_exec(instance_ip,
+  (status, output) = util.ssh_exec(instance_ip,
                               'top -n2 | grep Cpu | grep -v grep | tail -n 1 | awk \'{print $2}\' | grep -v PID')
   if status == 0:
     # format: connection to ... closed.\n ...%us
