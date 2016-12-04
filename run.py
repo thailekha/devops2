@@ -13,6 +13,7 @@ logger = logger.Logger()
 def main():
   if len(sys.argv) == 2 and valid_ip_address(sys.argv[1]):
     instance_ip = '-'.join(sys.argv[1].split('.'))
+    menu()
   else:
     logger.log('Cannot parse ip address', 'e')
 
