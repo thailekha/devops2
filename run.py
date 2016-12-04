@@ -8,7 +8,7 @@ Main method to start the program
 """
 
 instance_ip = None
-
+logger = logger.Logger()
 
 def main():
   if len(sys.argv) == 2 and valid_ip_address(sys.argv[1]):
