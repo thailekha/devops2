@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-import subprocess, time, sys, logging, boto3.ec2.cloudwatch
+import sys, logging
 import util,monitor,cloudwatch
 
 """

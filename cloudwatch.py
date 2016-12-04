@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-import boto.ec2, boto.ec2.cloudwatch, pprint, datetime, sys, logging
+import boto.ec2, boto.ec2.cloudwatch, pprint, datetime, sys
 import util
 
 logger = util.Logger()
