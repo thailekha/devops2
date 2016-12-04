@@ -12,6 +12,7 @@ logger = logger.Logger()
 
 def main():
   if len(sys.argv) == 2 and valid_ip_address(sys.argv[1]):
+    global instance_ip
     instance_ip = '-'.join(sys.argv[1].split('.'))
     menu()
   else:
