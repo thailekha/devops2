@@ -13,7 +13,7 @@ def menu():
                          ['Check CPU', 'Cloudwatch metrics'])
       if option == 0:
         # Check CPU
-        monitor.get_cpu_usage(input('IP address: '))
+        monitor.get_cpu_usage('-'.join(input('IP address: ').split('.')))
       elif option == 1:
         cloudwatch.main()
       elif option == -99:
