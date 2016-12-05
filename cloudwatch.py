@@ -37,9 +37,11 @@ def main():
     key_id = getpass.getpass('Key ID: ')
     if key_id == '-99':
       return
+    logger.log('key length: ' + len(key_id),'st')
     secret = getpass.getpass('Secret: ')
     if secret == '-99':
       return
+    logger.log('key length: ' + len(secret),'st')
 
     ec2_conn = boto.ec2.connect_to_region('us-west-2',
                                           aws_access_key_id=key_id,
