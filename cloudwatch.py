@@ -115,7 +115,7 @@ def get_running_instances_metrics(ec2_conn, ec2_metrics):
 # ===========================================================================================
 
 def print_stats(cw, ec2_conn, metric, namespace, instance_ids):
-  logger.log(metric + ': ', 'o')
+  logger.log('Average ' + metric + ' in the last 5 minutes: ', 'o')
   # eg. [{'InstanceId': ['i-0f18e6168b19416d4']}, {'InstanceId': ['i-0150c3ce3a86c5beb']}, {'InstanceId': ['i-0d631b18e93a20d7c']}]
   for instance_id in instance_ids:
     instance = ec2_conn.get_only_instances(instance_ids=[instance_id])[0]
@@ -130,10 +130,11 @@ def print_stats(cw, ec2_conn, metric, namespace, instance_ids):
     'Unit': 'Percent'}]
     """
 
+    # "now": the time when this function is called
     result = cw.get_metric_statistics(
-      300,
-      datetime.datetime.utcnow() - datetime.timedelta(seconds=600),
-      datetime.datetime.utcnow(),
+      300,  # 300 seconds / 5 minutes period
+      datetime.datetime.utcnow() - datetime.timedelta(seconds=301),  # start from 301 seconds ago
+      datetime.datetime.utcnow(),  # until now
       metric,
       namespace,
       'Average',
