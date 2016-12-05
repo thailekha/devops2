@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-import boto.ec2, boto.ec2.cloudwatch, pprint, datetime, sys
+import boto, boto.ec2, boto.ec2.cloudwatch, pprint, datetime, sys
 import util
 
 logger = util.Logger()
@@ -95,8 +95,7 @@ def print_namespaces(all_metrics):
       namespaces[i.namespace] += 1
     else:
       namespaces[i.namespace] = 1
-
-      # pp(namespaces)
+  pp(namespaces)
 
 
 # ===========================================================================================
@@ -119,8 +118,7 @@ def print_atuoscaling_metrics(all_metrics):
         as_metrics[i.name] += 1
       else:
         as_metrics[i.name] = 1
-
-        # pp(as_metrics)
+  pp(as_metrics)
 
 
 # ===========================================================================================
@@ -152,8 +150,7 @@ def list_ec2_metrics(all_metrics):
         ec2_metrics[i.name] += 1
       else:
         ec2_metrics[i.name] = 1
-
-        # pp(ec2_metrics)
+  pp(ec2_metrics)
 
 
 # ===========================================================================================
@@ -192,16 +189,18 @@ def get_running_instances_metrics(ec2_conn, ec2_metrics):
 
 # ===========================================================================================
 # http://stackoverflow.com/questions/16383809/how-do-i-get-the-most-recent-cloudwatch-metric-data-for-an-instance-using-boto
+# print statistics
+# ===========================================================================================
 
 def print_stats(cw, ec2_conn, metric, namespace, instance_ids):
-  logger.log(metric + ': ', 'st')
+  logger.log(metric + ': ', 'o')
   # eg. [{'InstanceId': ['i-0f18e6168b19416d4']}, {'InstanceId': ['i-0150c3ce3a86c5beb']}, {'InstanceId': ['i-0d631b18e93a20d7c']}]
   for instance_id in instance_ids:
     instance = ec2_conn.get_only_instances(instance_ids=[instance_id])[0]
     info = ''
     if 'Name' in instance.tags:
-      info += instance.tags['Name'] + "/"
-    info += instance.ip_address + "/" + instance_id + ': '
+      info += instance.tags['Name'] + " / "
+    info += instance.ip_address + " / " + instance_id + ': '
 
     """
     [{'Average': 0.034,
