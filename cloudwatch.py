@@ -32,7 +32,7 @@ Attributes of a metric:
 
 def main():
   register_credentials = True
-  while(register_credentials):
+  while (register_credentials):
     logger.log('Please provide credentials, or input -99 to exit', 'w')
     key_id = getpass.getpass('Key ID: ')
     if key_id == '-99':
@@ -61,7 +61,7 @@ def main():
       register_credentials = False
     except:
       logger.log(sys.exc_info()[0], 'e')
-      logger.log('Error adding credentials, please try again','e')
+      logger.log('Error adding credentials, please try again', 'e')
 
   metrics_list = sorted(list(running_instances_metrics.keys()))
   logger.log('Done', 'w')
@@ -73,84 +73,6 @@ def main():
       print_stats(cw, ec2_conn, metrics_list[option], 'AWS/EC2', running_instances_metrics[metrics_list[option]])
     elif option == -99:
       flag = False
-
-
-# ===========================================================================================
-# list all namespaces
-# ===========================================================================================
-"""
-{'AWS/AutoScaling': 8,
- 'AWS/EBS': 151,
- 'AWS/EC2': 260,
- 'AWS/ELB': 67,
- 'AWS/S3': 2,
- 'AWS/SNS': 2}
-"""
-
-
-def print_namespaces(all_metrics):
-  namespaces = {}
-  for i in all_metrics:
-    if i.namespace in namespaces:
-      namespaces[i.namespace] += 1
-    else:
-      namespaces[i.namespace] = 1
-  pp(namespaces)
-
-
-# ===========================================================================================
-# list metrics of autoscaling namespace
-# ===========================================================================================
-"""
-{'GroupDesiredCapacity': 1,
- 'GroupInServiceInstances': 2,
- 'GroupPendingInstances': 2,
- 'GroupTerminatingInstances': 1,
- 'GroupTotalInstances': 2}
-"""
-
-
-def print_atuoscaling_metrics(all_metrics):
-  as_metrics = {}
-  for i in all_metrics:
-    if i.namespace == 'AWS/AutoScaling':
-      if i.name in as_metrics:
-        as_metrics[i.name] += 1
-      else:
-        as_metrics[i.name] = 1
-  pp(as_metrics)
-
-
-# ===========================================================================================
-# list metrics of ec2 namespace
-# ===========================================================================================
-"""
-{'CPUCreditBalance': 21,
- 'CPUCreditUsage': 19,
- 'CPUUtilization': 20,
- 'DiskReadBytes': 20,
- 'DiskReadOps': 23,
- 'DiskWriteBytes': 20,
- 'DiskWriteOps': 18,
- 'NetworkIn': 17,
- 'NetworkOut': 22,
- 'NetworkPacketsIn': 16,
- 'NetworkPacketsOut': 14,
- 'StatusCheckFailed': 18,
- 'StatusCheckFailed_Instance': 18,
- 'StatusCheckFailed_System': 14}
-"""
-
-
-def list_ec2_metrics(all_metrics):
-  ec2_metrics = {}
-  for i in all_metrics:
-    if i.namespace == 'AWS/EC2':
-      if i.name in ec2_metrics:
-        ec2_metrics[i.name] += 1
-      else:
-        ec2_metrics[i.name] = 1
-  pp(ec2_metrics)
 
 
 # ===========================================================================================
@@ -220,6 +142,71 @@ def print_stats(cw, ec2_conn, metric, namespace, instance_ids):
 
     info += str(result['Average']) + " " + str(result['Unit'])
     logger.log(info, 'st')
+
+
+# ===========================================================================================
+# some other functions thtat maybe helpful
+# ===========================================================================================
+
+# ===========================================================================================
+# list all namespaces
+# ===========================================================================================
+"""
+{'AWS/AutoScaling': 8,
+ 'AWS/EBS': 151,
+ 'AWS/EC2': 260,
+ 'AWS/ELB': 67,
+ 'AWS/S3': 2,
+ 'AWS/SNS': 2}
+"""
+
+
+def print_namespaces(all_metrics):
+  namespaces = {}
+  for i in all_metrics:
+    if i.namespace in namespaces:
+      namespaces[i.namespace] += 1
+    else:
+      namespaces[i.namespace] = 1
+  pp(namespaces)
+
+
+# ===========================================================================================
+# list metrics of autoscaling namespace
+# ===========================================================================================
+"""
+{'GroupDesiredCapacity': 1,
+ 'GroupInServiceInstances': 2,
+ 'GroupPendingInstances': 2,
+ 'GroupTerminatingInstances': 1,
+ 'GroupTotalInstances': 2}
+"""
+
+
+def print_atuoscaling_metrics(all_metrics):
+  as_metrics = {}
+  for i in all_metrics:
+    if i.namespace == 'AWS/AutoScaling':
+      if i.name in as_metrics:
+        as_metrics[i.name] += 1
+      else:
+        as_metrics[i.name] = 1
+  pp(as_metrics)
+
+
+# ===========================================================================================
+# list metrics of ec2 namespace
+# ===========================================================================================
+
+def list_ec2_metrics(all_metrics):
+  ec2_metrics = {}
+  for i in all_metrics:
+    if i.namespace == 'AWS/EC2':
+      if i.name in ec2_metrics:
+        ec2_metrics[i.name] += 1
+      else:
+        ec2_metrics[i.name] = 1
+  pp(ec2_metrics)
 
 
 if __name__ == '__main__':
