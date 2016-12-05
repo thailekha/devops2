@@ -131,6 +131,7 @@ def wait_ssh_port(instance_ip):
   scan_ssh_port = "ssh -t ubuntu@ec2-" + instance_ip + ".us-west-2.compute.amazonaws.com " + 'nc -zv localhost 22'
   (status, output) = subprocess.getstatusoutput(scan_ssh_port)
   while status != 0:
+    logger.log(output + ', SSH port not open, waiting for 10 seconds','w')
     time.sleep(10)
     (status, output) = subprocess.getstatusoutput(scan_ssh_port)
   logger.log('SSH port is open', 's')
