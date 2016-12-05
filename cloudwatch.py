@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-import boto, boto.ec2, boto.ec2.cloudwatch, pprint, datetime, sys
+import boto, boto.ec2, boto.ec2.cloudwatch, pprint, datetime, sys, getpass
 import util
 
 logger = util.Logger()
@@ -34,10 +34,10 @@ def main():
   register_credentials = True
   while(register_credentials):
     logger.log('Please provide credentials, or input -99 to exit', 'w')
-    key_id = input('Key ID: ')
+    key_id = getpass.getpass('Key ID: ')
     if key_id == '-99':
       return
-    secret = input('Secret: ')
+    secret = getpass.getpass('Secret: ')
     if secret == '-99':
       return
 
