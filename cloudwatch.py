@@ -133,7 +133,7 @@ def print_stats(cw, ec2_conn, metric, namespace, instance_ids):
     """
 
     # "now": the time when this function is called
-    result = cw.get_metric_statistics(
+    results = cw.get_metric_statistics(
       300,  # 300 seconds / 5 minutes period
       datetime.datetime.utcnow() - datetime.timedelta(seconds=400),  # start from 400 seconds ago
       datetime.datetime.utcnow(),  # until now
@@ -141,9 +141,10 @@ def print_stats(cw, ec2_conn, metric, namespace, instance_ids):
       namespace,
       'Average',
       dimensions={'InstanceId': [instance_id]}
-    )[0]
-
-    info += str(result['Average']) + " " + str(result['Unit'])
+    )
+    
+    for result in results:
+      info += str(result['Average']) + " " + str(result['Unit']) + "\n"
     logger.log(info, 'st')
 
 
